@@ -1,0 +1,210 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    color-scheme: dark;
+  }
+
+  html {
+    background: #020611;
+    -webkit-text-size-adjust: 100%;
+  }
+
+  body {
+    @apply bg-void text-ice antialiased;
+    overflow-x: hidden;
+  }
+
+  :focus-visible {
+    outline: 2px solid #22d3ee;
+    outline-offset: 3px;
+  }
+
+  button {
+    -webkit-tap-highlight-color: transparent;
+    touch-action: manipulation;
+  }
+
+  ::selection {
+    background: rgba(34, 211, 238, 0.3);
+  }
+}
+
+/* ---------- Background layers ---------- */
+
+.bg-lab-grid {
+  background-image:
+    linear-gradient(rgba(56, 189, 248, 0.05) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(56, 189, 248, 0.05) 1px, transparent 1px);
+  background-size: 64px 64px;
+  -webkit-mask-image: radial-gradient(ellipse at center, #000 25%, transparent 75%);
+  mask-image: radial-gradient(ellipse at center, #000 25%, transparent 75%);
+}
+
+.vignette {
+  background: radial-gradient(ellipse at center, transparent 42%, rgba(2, 6, 17, 0.88) 100%);
+}
+
+.scanline {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  height: 160px;
+  background: linear-gradient(to bottom, transparent, rgba(34, 211, 238, 0.045), transparent);
+  animation: scan 11s linear infinite;
+}
+
+.ambient-glow {
+  animation: ambient 28s ease-in-out infinite alternate;
+}
+
+.ambient-glow-alt {
+  animation: ambient 34s ease-in-out infinite alternate-reverse;
+}
+
+.particle {
+  animation: drift 20s ease-in-out infinite alternate;
+}
+
+.neural-signal {
+  stroke-dasharray: 8 192;
+  animation: signal var(--signal-duration, 6s) linear var(--signal-delay, 0s) infinite;
+}
+
+.neural-glow {
+  animation: glow-breathe-soft 7s ease-in-out infinite;
+}
+
+/* ---------- Board ---------- */
+
+.board-dots {
+  background-image: radial-gradient(rgba(56, 189, 248, 0.2) 1px, transparent 1.3px);
+  background-size: 24px 24px;
+  -webkit-mask-image: radial-gradient(circle at center, #000 30%, transparent 85%);
+  mask-image: radial-gradient(circle at center, #000 30%, transparent 85%);
+}
+
+.board-sweep {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  height: 22%;
+  background: linear-gradient(to bottom, transparent, rgba(34, 211, 238, 0.06), transparent);
+  animation: board-sweep 8s ease-in-out infinite;
+}
+
+.node-idle-wave {
+  opacity: 0;
+  animation: idle-wave 7.5s ease-in-out infinite;
+}
+
+.btn-glow {
+  animation: glow-breathe 4.5s ease-in-out infinite;
+}
+
+/* ---------- Keyframes ---------- */
+
+@keyframes scan {
+  from {
+    transform: translateY(-20vh);
+  }
+  to {
+    transform: translateY(120vh);
+  }
+}
+
+@keyframes ambient {
+  from {
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+  to {
+    transform: translate3d(3%, 4%, 0) scale(1.08);
+  }
+}
+
+@keyframes drift {
+  from {
+    transform: translate3d(0, 0, 0);
+  }
+  to {
+    transform: translate3d(14px, -46px, 0);
+  }
+}
+
+@keyframes signal {
+  from {
+    stroke-dashoffset: 8;
+  }
+  to {
+    stroke-dashoffset: -100;
+  }
+}
+
+@keyframes glow-breathe-soft {
+  0%,
+  100% {
+    opacity: 0.25;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+
+@keyframes glow-breathe {
+  0%,
+  100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.07);
+  }
+}
+
+@keyframes board-sweep {
+  0% {
+    transform: translateY(-100%);
+  }
+  60%,
+  100% {
+    transform: translateY(520%);
+  }
+}
+
+@keyframes idle-wave {
+  0%,
+  34%,
+  100% {
+    opacity: 0;
+  }
+  14% {
+    opacity: 1;
+  }
+}
+
+/* ---------- Reduced motion ---------- */
+
+@media (prefers-reduced-motion: reduce) {
+  .scanline,
+  .board-sweep {
+    display: none;
+  }
+
+  .particle,
+  .ambient-glow,
+  .ambient-glow-alt,
+  .neural-signal,
+  .neural-glow,
+  .node-idle-wave,
+  .btn-glow,
+  .board-ring {
+    animation: none !important;
+  }
+
+  .neural-signal {
+    opacity: 0;
+  }
+}
