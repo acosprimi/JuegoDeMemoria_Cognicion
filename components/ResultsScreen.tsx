@@ -1,9 +1,10 @@
 import { motion } from 'motion/react';
-import type { ReactNode } from 'react';
+import type { CSSProperties, ReactNode } from 'react';
 import { GAME_CONFIG, getPerformance } from '@/lib/game-engine';
 import { formatPercent, formatScore, formatTime, pad2 } from '@/lib/format';
 import type { PersonalRecords, RecordUpdate, SessionSummary } from '@/lib/types';
 import { AnimatedNumber } from './AnimatedNumber';
+import { HeartDoodle, SparkleDoodle, StarDoodle } from './Doodles';
 import { PersonalBest } from './PersonalBest';
 import { PrimaryButton } from './PrimaryButton';
 import { RecallGauge } from './RecallGauge';
@@ -28,12 +29,13 @@ function ReportRow({
 }) {
   return (
     <div className="flex items-baseline gap-3 py-3.5">
-      <dt className="text-xs tracking-[0.2em] text-mute">{label}</dt>
-      <span aria-hidden="true" className="mb-1 h-px flex-1 border-b border-dashed border-hairline" />
-      <dd className="flex items-baseline gap-3 font-mono text-2xl tabular-nums text-ice sm:text-3xl">
+      <dt className="text-sm font-bold text-mute">{label}</dt>
+      <span aria-hidden="true" className="mb-1 h-px flex-1 border-b-2 border-dotted border-pink" />
+      <dd className="flex items-baseline gap-3 font-display text-2xl font-semibold tabular-nums text-cocoa sm:text-3xl">
         {isNewRecord && (
-          <span className="rounded-sm border border-signal/60 px-1.5 py-0.5 text-[10px] tracking-[0.16em] text-signal">
-            NEW RECORD
+          <span className="inline-flex items-center gap-1 rounded-full bg-sun px-2.5 py-0.5 text-[11px] font-bold text-cocoa">
+            <StarDoodle className="size-3" fill="#FFF8EC" stroke="#FFF8EC" />
+            new best!
           </span>
         )}
         {children}
@@ -59,9 +61,9 @@ export function ResultsScreen({
   return (
     <motion.div
       className="mx-auto grid w-full max-w-5xl items-center gap-10 md:grid-cols-[minmax(0,280px)_minmax(0,1fr)] md:gap-16"
-      initial={{ opacity: 0, y: 16, filter: 'blur(8px)' }}
-      animate={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
-      exit={{ opacity: 0, y: -10, filter: 'blur(6px)', transition: { duration: 0.25 } }}
+      initial={{ opacity: 0, y: 16, scale: 0.97 }}
+      animate={{ opacity: 1, y: 0, scale: 1 }}
+      exit={{ opacity: 0, y: -10, transition: { duration: 0.25 } }}
       transition={{ duration: 0.6, ease: 'easeOut' }}
     >
       <div className="flex flex-col items-center gap-8 md:items-start">
@@ -73,49 +75,57 @@ export function ResultsScreen({
         <PersonalBest records={records} variant="list" highlightFinishedAt={summary.finishedAt} />
       </div>
 
-      <div>
-        <h1 className="text-balance text-[clamp(1.9rem,4vw,3rem)] font-semibold leading-tight tracking-[-0.01em] text-ice">
-          EXPERIMENT COMPLETE
-        </h1>
-        <p className="mt-3 flex gap-5 font-mono text-[11px] tracking-[0.2em] text-mute">
-          <span>SESSION {pad2(sessionNumber)}</span>
-          <span>{time}</span>
-        </p>
-
-        <dl className="mt-6 divide-y divide-hairline border-y border-hairline">
-          <ReportRow label="FINAL SCORE" isNewRecord={update?.newBestScore}>
-            <AnimatedNumber value={summary.score} from={0} format={formatScore} duration={1.1} />
-          </ReportRow>
-          <ReportRow label="MAX LEVEL" isNewRecord={update?.newBestLevel}>
-            {pad2(summary.maxLevel)}
-          </ReportRow>
-          <ReportRow label="BEST SEQUENCE" isNewRecord={update?.newLongestSequence}>
-            {pad2(summary.sequenceRecord)}
-          </ReportRow>
-          <ReportRow label="ACCURACY" isNewRecord={update?.newBestAccuracy}>
-            {formatPercent(summary.accuracy)}
-          </ReportRow>
-          <ReportRow label="SESSION TIME">{formatTime(summary.durationMs)}</ReportRow>
-        </dl>
-
-        <div className="mt-7">
-          <p className="text-[11px] tracking-[0.22em] text-mute">MEMORY PERFORMANCE</p>
-          <p className="mt-2 text-xl font-semibold tracking-wide text-ice sm:text-2xl">
-            {performance.title}
+      <div className="stitched rounded-[2.5rem] border-[4px] border-pink bg-paper/90 px-6 py-7 shadow-[0_8px_0_#FFC2D9] sm:px-9" style={{ '--stitch': '#FFE3EE' } as CSSProperties}>
+        <div className="relative z-10">
+          <h1 className="flex items-center gap-3 text-balance font-display text-[clamp(2rem,4vw,3rem)] font-semibold leading-tight text-cocoa">
+            You finished!
+            <HeartDoodle className="size-8 shrink-0 text-rose sm:size-10" />
+          </h1>
+          <p className="mt-2 flex gap-4 text-[13px] font-bold text-mute">
+            <span>Round {pad2(sessionNumber)}</span>
+            <span>{time}</span>
           </p>
-          <p className="mt-2 max-w-md text-sm leading-relaxed text-mute">{performance.note}</p>
-          <p className="mt-3 text-xs text-mute/80">
-            Educational demonstration. Not a clinical or medical assessment.
-          </p>
-        </div>
 
-        <div className="mt-8 flex flex-wrap items-center gap-4">
-          <PrimaryButton onClick={onReplay} icon="replay" autoFocus>
-            RUN EXPERIMENT AGAIN
-          </PrimaryButton>
-          <PrimaryButton onClick={onReturn} icon="back" variant="ghost">
-            RETURN TO LAB
-          </PrimaryButton>
+          <dl className="mt-5 divide-y-2 divide-dashed divide-pink/50 border-y-2 border-dashed border-pink/50">
+            <ReportRow label="Final score" isNewRecord={update?.newBestScore}>
+              <AnimatedNumber value={summary.score} from={0} format={formatScore} duration={1.1} />
+            </ReportRow>
+            <ReportRow label="Best level" isNewRecord={update?.newBestLevel}>
+              {pad2(summary.maxLevel)}
+            </ReportRow>
+            <ReportRow label="Longest sequence" isNewRecord={update?.newLongestSequence}>
+              {pad2(summary.sequenceRecord)}
+            </ReportRow>
+            <ReportRow label="Accuracy" isNewRecord={update?.newBestAccuracy}>
+              {formatPercent(summary.accuracy)}
+            </ReportRow>
+            <ReportRow label="Play time">{formatTime(summary.durationMs)}</ReportRow>
+          </dl>
+
+          <div className="mt-6 rounded-3xl border-2 border-sun bg-butter/70 px-5 py-4">
+            <p className="flex items-center gap-2 text-[13px] font-bold text-mute">
+              <SparkleDoodle className="size-4 text-[#E8A21F]" />
+              Your memory power
+            </p>
+            <p className="mt-1 font-display text-xl font-semibold text-cocoa sm:text-2xl">
+              {performance.title}
+            </p>
+            <p className="mt-1 max-w-md text-sm font-semibold leading-relaxed text-mute">
+              {performance.note}
+            </p>
+          </div>
+          <p className="mt-3 text-xs font-semibold text-mute">
+            Just for fun and learning. Not a clinical or medical test.
+          </p>
+
+          <div className="mt-7 flex flex-wrap items-center gap-4">
+            <PrimaryButton onClick={onReplay} icon="replay" autoFocus>
+              Play again
+            </PrimaryButton>
+            <PrimaryButton onClick={onReturn} icon="back" variant="ghost">
+              Back home
+            </PrimaryButton>
+          </div>
         </div>
       </div>
     </motion.div>

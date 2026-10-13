@@ -227,24 +227,24 @@ export function buildSummary(state: GameState, fallbackNow: number): SessionSumm
 export function getPerformance(summary: SessionSummary): PerformanceReport {
   if (summary.mastered) {
     return {
-      title: 'EXPERIMENT MASTERED',
-      note: 'All twelve levels cleared without a single error.',
+      title: 'Memory Master!',
+      note: 'All twelve levels cleared without a single oopsie.',
     };
   }
   if (summary.sequenceRecord >= 9) {
     return {
-      title: 'EXCEPTIONAL RECALL',
-      note: 'You held a very long sequence in the right order.',
+      title: 'Super Sparkly Memory',
+      note: 'You kept a very long sequence in just the right order.',
     };
   }
   if (summary.sequenceRecord >= 6) {
     return {
-      title: 'STRONG PATTERN RETENTION',
-      note: 'You kept a long chain of positions in order.',
+      title: 'Cozy Memory Star',
+      note: 'You remembered a long chain of friends in order.',
     };
   }
   return {
-    title: 'MEMORY SIGNAL DETECTED',
-    note: 'You held a short sequence in working memory. Run it again to stretch your span.',
+    title: 'Sweet Little Memory',
+    note: 'You remembered a short sequence. Play again to stretch it a little longer!',
   };
 }

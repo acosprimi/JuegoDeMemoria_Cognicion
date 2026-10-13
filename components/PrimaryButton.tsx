@@ -53,29 +53,23 @@ export function PrimaryButton({
       type="button"
       onClick={onClick}
       autoFocus={autoFocus}
-      whileHover={{ y: -2 }}
-      whileTap={{ scale: 0.97, y: 0 }}
-      transition={{ type: 'spring', stiffness: 420, damping: 26 }}
-      className="group relative inline-flex min-h-[3.25rem] items-center justify-center rounded-full px-8 py-3.5 text-[13px] font-semibold tracking-[0.2em] text-ice"
+      whileHover={{ y: -3, rotate: -1.5 }}
+      whileTap={{ scale: 0.95, y: 3 }}
+      transition={{ type: 'spring', stiffness: 420, damping: 18 }}
+      className={cn(
+        'group relative inline-flex min-h-[3.5rem] items-center justify-center rounded-full border-[3px] px-8 py-3 font-display text-lg font-semibold text-cocoa',
+        primary
+          ? 'btn-bounce border-[#E8639A] bg-gradient-to-b from-[#FFB3CF] to-[#FF8CB5] shadow-[0_6px_0_#E8639A]'
+          : 'border-lilac bg-paper shadow-[0_6px_0_#CDB8FA]',
+      )}
     >
       {primary && (
         <span
           aria-hidden="true"
-          className="btn-glow absolute -inset-1.5 rounded-full bg-signal/25 opacity-60 blur-xl transition-opacity duration-300 group-hover:opacity-100"
+          className="pointer-events-none absolute left-5 right-5 top-1.5 h-2 rounded-full bg-white/50"
         />
       )}
-      <span
-        aria-hidden="true"
-        className={cn(
-          'absolute inset-0 rounded-full',
-          primary ? 'bg-gradient-to-r from-signal via-azure to-pulse' : 'bg-hairline',
-        )}
-      />
-      <span
-        aria-hidden="true"
-        className="absolute inset-px rounded-full bg-void transition-colors duration-300 group-hover:bg-panel"
-      />
-      <span className="relative z-10 flex items-center gap-3">
+      <span className="relative z-10 flex items-center gap-2.5">
         {children}
         {icon && <ButtonIconGlyph icon={icon} />}
       </span>

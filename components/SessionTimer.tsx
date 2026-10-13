@@ -19,5 +19,5 @@ export function SessionTimer({ startTime, endTime }: SessionTimerProps) {
   }, [running]);
 
   const elapsed = startTime === null ? 0 : (endTime ?? now) - startTime;
-  return <span className="font-mono tabular-nums">{formatTime(elapsed)}</span>;
+  return <span className="font-display font-medium tabular-nums">{formatTime(elapsed)}</span>;
 }

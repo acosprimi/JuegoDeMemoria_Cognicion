@@ -1,5 +1,5 @@
 import { cn } from '@/lib/cn';
-import { BrainMark } from './BrainMark';
+import { CuteMark } from './CuteMark';
 import { SoundToggle } from './SoundToggle';
 import { StatusIndicator } from './StatusIndicator';
 
@@ -23,14 +23,14 @@ export function ExperimentHeader({
         dimmed && 'opacity-30',
       )}
     >
-      <div className="order-1 flex items-center gap-3.5">
-        <BrainMark className="size-9 shrink-0 text-signal" />
+      <div className="order-1 flex items-center gap-3">
+        <CuteMark className="size-11 shrink-0" />
         <div>
-          <p className="text-[15px] font-semibold tracking-[0.3em] text-ice sm:text-base">
-            MEMORY SEQUENCE
+          <p className="font-display text-xl font-semibold leading-none text-cocoa sm:text-2xl">
+            Memory Sequence
           </p>
-          <p className="mt-0.5 text-[10px] tracking-[0.26em] text-mute sm:text-[11px]">
-            NEURAL MEMORY EXPERIMENT
+          <p className="mt-1 text-[12px] font-semibold text-mute sm:text-[13px]">
+            a cozy little memory game
           </p>
         </div>
       </div>

@@ -1,7 +1,8 @@
-# MEMORY SEQUENCE · Neural Memory Experiment
+# Memory Sequence · a cozy memory game
 
 Juego corto de memoria visual/secuencial para una exposición escolar sobre la memoria humana.
-Observas una secuencia de nodos que se iluminan y la reproduces en el mismo orden.
+Observas una secuencia de amiguitos kawaii que se iluminan y la reproduces en el mismo orden.
+Estética pastel y acogedora: rosa, lila, crema, celeste y amarillo mantequilla.
 Sin backend, base de datos ni autenticación: todo corre en el navegador.
 
 ## Ejecutar
@@ -13,7 +14,7 @@ npm run build && npm run start
 ```
 
 Requiere Node 18.18+ (recomendado 20+). La primera vez que se hace `build` hace falta internet
-(las fuentes Sora e IBM Plex Mono se descargan y se sirven desde el propio sitio; después el juego funciona offline).
+(las fuentes Fredoka y Nunito se descargan y se sirven desde el propio sitio; después el juego funciona offline).
 
 ## Desplegar en Vercel
 
@@ -21,25 +22,26 @@ Sube el proyecto a GitHub e impórtalo en vercel.com. Next.js se detecta solo; n
 
 ## Cómo se juega
 
-1. **START EXPERIMENT** → cuenta atrás 3 · 2 · 1 · BEGIN.
-2. **OBSERVE CAREFULLY**: los nodos se iluminan en cian (la señal del sistema).
-3. **YOUR TURN**: repite el orden con el ratón/táctil o con las teclas **1–9**. Tu ruta se traza en violeta.
-4. Si aciertas: **SEQUENCE CONFIRMED** y sube el nivel automáticamente. Si fallas: **PATTERN LOST** y reporte final.
-5. Nivel 1 = 3 nodos, nivel 2 = 4… hasta el nivel 12 (14 nodos) = **EXPERIMENT MASTERED**.
+1. **Let's play!** → cuenta atrás 3 · 2 · 1 · Go!
+2. **Watch closely**: los amiguitos (corazón, estrella, flor, nube, gatito, osito, conejito, mochi y sol) se iluminan y ponen carita feliz.
+3. **Your turn**: repite el orden con el ratón/táctil o con las teclas **1–9**. Tu ruta se dibuja en rosa.
+4. Si aciertas: **Yay, you did it!** y sube el nivel automáticamente. Si fallas: **Oh no, oopsie!** y resumen final.
+5. Nivel 1 = 3 amiguitos, nivel 2 = 4… hasta el nivel 12 (14) = **Memory Master!**
 
-En la pantalla de inicio puedes tocar los nodos para previsualizarlos (con sonido).
+En la pantalla de inicio puedes tocar los amiguitos para previsualizarlos (con sonido).
 
 ## Estructura
 
 ```
 app/                 layout (fuentes, metadata), page, globals.css (animaciones CSS + reduced-motion)
 components/          UI presentacional (MemoryBoard, MemoryNode, GameHUD, ResultsScreen, ...)
+                     Doodles.tsx = corazones/estrellas/flores/nubes; SweetBackground.tsx = fondo pastel
 hooks/useMemoryGame  único sitio con timers y efectos (audio, storage). Cada efecto limpia sus timers.
 lib/game-engine.ts   máquina de estados pura (reducer), generación de secuencias, timing, resumen
 lib/scoring.ts       puntuación: base + nivel + velocidad + precisión
 lib/audio.ts         sonidos con Web Audio API (sin archivos)
 lib/storage.ts       récords y preferencia de sonido en localStorage (tolerante a fallos)
-lib/neural-data.ts   nodos/aristas del fondo, deterministas (sin hydration mismatch)
+lib/node-shapes.ts   los 9 personajes (forma, paleta y posición de la carita)
 ```
 
 Estados: `idle → countdown → showing → input → success → (showing…) | gameOver → results`.

@@ -12,14 +12,18 @@ export function SoundToggle({ enabled, onToggle }: SoundToggleProps) {
       onClick={onToggle}
       aria-pressed={enabled}
       aria-label="Sound effects"
-      className="inline-flex min-h-10 items-center gap-2 rounded-full border border-hairline bg-panel/60 px-3.5 font-mono text-[11px] tracking-[0.16em] text-ice/90 backdrop-blur transition-colors hover:border-signal/50 hover:text-ice"
+      className={`wobble-hover inline-flex min-h-10 items-center gap-2 rounded-full border-2 px-3.5 font-display text-[13px] font-medium text-cocoa shadow-[0_3px_0] transition-colors ${
+        enabled
+          ? 'border-sun bg-butter shadow-[#FFE27A]'
+          : 'border-lilac bg-paper/80 shadow-[#E9DEFF]'
+      }`}
     >
       {enabled ? (
-        <Volume2 className="size-4 text-signal" aria-hidden="true" />
+        <Volume2 className="size-4 text-[#E8A21F]" aria-hidden="true" />
       ) : (
-        <VolumeX className="size-4 text-mute" aria-hidden="true" />
+        <VolumeX className="size-4 text-grape" aria-hidden="true" />
       )}
-      <span className="hidden sm:inline">{enabled ? 'SOUND ON' : 'SOUND OFF'}</span>
+      <span className="hidden sm:inline">{enabled ? 'Sound on' : 'Sound off'}</span>
     </button>
   );
 }

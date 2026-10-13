@@ -1,37 +1,36 @@
 import type { Metadata, Viewport } from 'next';
-import { IBM_Plex_Mono, Sora } from 'next/font/google';
+import { Fredoka, Nunito } from 'next/font/google';
 import type { ReactNode } from 'react';
 import './globals.css';
 
-const sora = Sora({
+const fredoka = Fredoka({
   subsets: ['latin'],
-  variable: '--font-sora',
+  variable: '--font-fredoka',
   display: 'swap',
 });
 
-const plexMono = IBM_Plex_Mono({
+const nunito = Nunito({
   subsets: ['latin'],
-  weight: ['400', '500', '600'],
-  variable: '--font-plex-mono',
+  variable: '--font-nunito',
   display: 'swap',
 });
 
 export const metadata: Metadata = {
-  title: 'MEMORY SEQUENCE | Neural Memory Experiment',
+  title: 'Memory Sequence | A cozy memory game',
   description:
-    'A short cognitive experiment designed to challenge visual working memory. Observe the pattern, then reproduce it precisely.',
+    'A cute little game for your working memory. Watch the friends light up, then tap them in the same order.',
 };
 
 export const viewport: Viewport = {
   width: 'device-width',
   initialScale: 1,
-  themeColor: '#020611',
-  colorScheme: 'dark',
+  themeColor: '#FFF8EC',
+  colorScheme: 'light',
 };
 
 export default function RootLayout({ children }: { children: ReactNode }) {
   return (
-    <html lang="en" className={`${sora.variable} ${plexMono.variable}`}>
+    <html lang="en" className={`${fredoka.variable} ${nunito.variable}`}>
       <body className="font-sans">{children}</body>
     </html>
   );

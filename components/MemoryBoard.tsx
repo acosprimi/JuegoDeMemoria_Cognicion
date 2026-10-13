@@ -8,6 +8,7 @@ import { Countdown } from './Countdown';
 import { MemoryNode } from './MemoryNode';
 import { SignalTrace, type TraceSegment } from './SignalTrace';
 import { SuccessBurst } from './SuccessBurst';
+import { FlowerDoodle, HeartDoodle, StarDoodle } from './Doodles';
 
 interface MemoryBoardProps {
   phase: GamePhase;
@@ -27,39 +28,39 @@ interface MemoryBoardProps {
 const NODE_INDEXES = Array.from({ length: NODE_COUNT }, (_, i) => i);
 
 const FRAME_TONE: Record<GamePhase, string> = {
-  idle: 'border-hairline shadow-[0_0_70px_-24px_rgba(34,211,238,0.35)]',
-  countdown: 'border-signal/50 shadow-[0_0_90px_-12px_rgba(34,211,238,0.5)]',
-  showing: 'border-signal/40 shadow-[0_0_90px_-16px_rgba(34,211,238,0.4)]',
-  input: 'border-pulse/60 shadow-[0_0_90px_-16px_rgba(139,92,246,0.5)]',
-  success: 'border-signal/80 shadow-[0_0_110px_-8px_rgba(34,211,238,0.6)]',
-  gameOver: 'border-fault/60 shadow-[0_0_90px_-16px_rgba(255,93,122,0.45)]',
-  results: 'border-hairline shadow-none',
+  idle: 'border-pink shadow-[0_10px_0_#FFC2D9,0_28px_50px_-18px_rgba(255,140,181,0.45)]',
+  countdown: 'border-sun shadow-[0_10px_0_#FFE27A,0_28px_50px_-18px_rgba(255,213,77,0.5)]',
+  showing: 'border-sun shadow-[0_10px_0_#FFE27A,0_28px_50px_-18px_rgba(255,213,77,0.5)]',
+  input: 'border-grape shadow-[0_10px_0_#CDB8FA,0_28px_50px_-18px_rgba(181,151,242,0.5)]',
+  success: 'border-leaf shadow-[0_10px_0_#B0EACF,0_28px_50px_-18px_rgba(126,214,171,0.55)]',
+  gameOver: 'border-coral shadow-[0_10px_0_#FFC2C9,0_28px_50px_-18px_rgba(255,124,142,0.45)]',
+  results: 'border-pink shadow-none',
 };
 
 const PHASE_LABEL: Record<GamePhase, string> = {
-  idle: 'SYSTEM READY',
-  countdown: 'CALIBRATING',
-  showing: 'ENCODING',
-  input: 'RECALL ACTIVE',
-  success: 'PATTERN CONFIRMED',
-  gameOver: 'PATTERN LOST',
-  results: 'SESSION CLOSED',
+  idle: 'Ready when you are',
+  countdown: 'Get ready!',
+  showing: 'Watch closely',
+  input: 'Your turn',
+  success: 'Yay!',
+  gameOver: 'Oopsie',
+  results: 'All done',
 };
 
 function getRightLabel(phase: GamePhase, progress: number, length: number | null): string {
   switch (phase) {
     case 'idle':
-      return 'TOUCH ANY NODE';
+      return 'Tap any friend';
     case 'showing':
-      return 'OBSERVE';
+      return 'Watching...';
     case 'input':
-      return `INPUT ${pad2(progress)}/${pad2(length ?? 0)}`;
+      return `Tapped ${pad2(progress)}/${pad2(length ?? 0)}`;
     case 'success':
-      return 'CONFIRMED';
+      return 'Perfect!';
     case 'gameOver':
-      return 'INTERRUPTED';
+      return 'Try again';
     default:
-      return 'STANDBY';
+      return 'Waiting';
   }
 }
 
@@ -97,51 +98,13 @@ function buildSegments(
   return segments;
 }
 
-function BoardDefs() {
-  return (
-    <svg width="0" height="0" className="absolute" aria-hidden="true" focusable="false">
-      <defs>
-        <radialGradient id="grad-system" cx="50%" cy="50%" r="62%">
-          <stop offset="0%" stopColor="#CFFAFE" stopOpacity="0.96" />
-          <stop offset="65%" stopColor="#22D3EE" stopOpacity="0.62" />
-          <stop offset="100%" stopColor="#22D3EE" stopOpacity="0.38" />
-        </radialGradient>
-        <radialGradient id="grad-user" cx="50%" cy="50%" r="62%">
-          <stop offset="0%" stopColor="#EDE9FE" stopOpacity="0.96" />
-          <stop offset="65%" stopColor="#8B5CF6" stopOpacity="0.66" />
-          <stop offset="100%" stopColor="#8B5CF6" stopOpacity="0.42" />
-        </radialGradient>
-        <radialGradient id="grad-fault" cx="50%" cy="50%" r="62%">
-          <stop offset="0%" stopColor="#FFE4E8" stopOpacity="0.96" />
-          <stop offset="65%" stopColor="#FF5D7A" stopOpacity="0.66" />
-          <stop offset="100%" stopColor="#FF5D7A" stopOpacity="0.42" />
-        </radialGradient>
-      </defs>
-    </svg>
-  );
-}
-
-function CornerBrackets() {
-  const corners = [
-    'left-3 top-3',
-    'right-3 top-3 rotate-90',
-    'bottom-3 right-3 rotate-180',
-    'bottom-3 left-3 -rotate-90',
-  ];
+function CornerDecorations() {
   return (
     <>
-      {corners.map((position) => (
-        <svg
-          key={position}
-          viewBox="0 0 20 20"
-          className={cn('pointer-events-none absolute size-4 text-signal/60', position)}
-          fill="none"
-          aria-hidden="true"
-          focusable="false"
-        >
-          <path d="M1 9V1H9" stroke="currentColor" strokeWidth="1.5" />
-        </svg>
-      ))}
+      <FlowerDoodle className="pointer-events-none absolute hidden sm:block left-3 top-9 size-7 text-pink" center="#FFF1A8" />
+      <HeartDoodle className="pointer-events-none absolute hidden sm:block right-4 top-10 size-6 text-lilac" />
+      <StarDoodle className="pointer-events-none absolute hidden sm:block bottom-10 left-4 size-6 text-sun" />
+      <FlowerDoodle className="pointer-events-none absolute hidden sm:block bottom-9 right-3 size-7 text-ocean/70" center="#FFF1A8" />
     </>
   );
 }
@@ -183,22 +146,20 @@ export function MemoryBoard({
     >
       <div
         className={cn(
-          'relative h-full w-full overflow-hidden rounded-3xl border bg-panel/60 backdrop-blur-md transition-[border-color,box-shadow] duration-500',
+          'stitched relative h-full w-full overflow-hidden rounded-[2.5rem] border-[5px] bg-paper/90 transition-[border-color,box-shadow] duration-500',
           FRAME_TONE[phase],
         )}
       >
-        <BoardDefs />
         <div className="board-dots absolute inset-0" aria-hidden="true" />
-        <div className="board-sweep" aria-hidden="true" />
         <SignalTrace segments={segments} />
-        <CornerBrackets />
+        <CornerDecorations />
 
         <div
-          className="pointer-events-none absolute inset-x-0 top-0 flex items-start justify-between px-9 pt-3.5 font-mono text-[11px] tracking-[0.18em] text-mute"
+          className="pointer-events-none absolute inset-x-0 top-0 z-10 flex items-start justify-between px-8 pt-3 font-display text-[11px] sm:px-10 sm:pt-4 sm:text-[13px] font-medium text-mute"
           aria-hidden="true"
         >
-          <span>MEMORY GRID</span>
-          <span className={cn(phase === 'gameOver' && 'text-fault', phase === 'input' && 'text-[#C4B5FD]')}>
+          <span>Memory garden</span>
+          <span className={cn(phase === 'gameOver' && 'text-coral', phase === 'input' && 'text-grape')}>
             {PHASE_LABEL[phase]}
           </span>
         </div>
@@ -218,10 +179,10 @@ export function MemoryBoard({
         </div>
 
         <div
-          className="pointer-events-none absolute inset-x-0 bottom-0 flex items-end justify-between px-9 pb-3.5 font-mono text-[11px] tracking-[0.18em] text-mute"
+          className="pointer-events-none absolute inset-x-0 bottom-0 z-10 flex items-end justify-between px-8 pb-3 font-display text-[11px] sm:px-10 sm:pb-4 sm:text-[13px] font-medium text-mute"
           aria-hidden="true"
         >
-          <span>SEQUENCE LENGTH {sequenceLength === null ? '--' : pad2(sequenceLength)}</span>
+          <span>Friends to remember {sequenceLength === null ? '--' : pad2(sequenceLength)}</span>
           <span>{getRightLabel(phase, userPath.length, sequenceLength)}</span>
         </div>
 

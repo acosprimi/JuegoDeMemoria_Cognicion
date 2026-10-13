@@ -10,10 +10,10 @@ export interface TraceSegment {
   tone: TraceTone;
 }
 
-const TONE_STYLE: Record<TraceTone, { stroke: string; glow: string }> = {
-  system: { stroke: '#22D3EE', glow: 'drop-shadow(0 0 1.6px rgba(34,211,238,0.95))' },
-  user: { stroke: '#A78BFA', glow: 'drop-shadow(0 0 1.6px rgba(139,92,246,0.95))' },
-  error: { stroke: '#FF5D7A', glow: 'drop-shadow(0 0 1.6px rgba(255,93,122,0.9))' },
+const TONE_STYLE: Record<TraceTone, { stroke: string; halo: string }> = {
+  system: { stroke: '#FFC93C', halo: '#FFF1A8' },
+  user: { stroke: '#FF8CB5', halo: '#FFD9E7' },
+  error: { stroke: '#FF7C8E', halo: '#FFD3D8' },
 };
 
 function segmentPath(from: number, to: number): string {
@@ -22,7 +22,7 @@ function segmentPath(from: number, to: number): string {
   return `M ${a.x} ${a.y} L ${b.x} ${b.y}`;
 }
 
-/** Lattice between the nodes plus the live signal path drawn on top. */
+/** Soft stitched lines between the friends, plus the path of the current round on top. */
 export function SignalTrace({ segments }: { segments: TraceSegment[] }) {
   return (
     <svg
@@ -32,29 +32,17 @@ export function SignalTrace({ segments }: { segments: TraceSegment[] }) {
       focusable="false"
     >
       <circle
-        className="board-ring animate-[spin_160s_linear_infinite] motion-reduce:animate-none"
         cx="50"
         cy="50"
-        r="47.5"
+        r="45"
         fill="none"
-        stroke="rgba(56,189,248,0.2)"
-        strokeWidth="0.25"
-        strokeDasharray="0.5 1.7"
-        style={{ transformOrigin: '50px 50px' }}
-      />
-      <circle
-        className="board-ring animate-[spin_220s_linear_infinite_reverse] motion-reduce:animate-none"
-        cx="50"
-        cy="50"
-        r="43"
-        fill="none"
-        stroke="rgba(139,92,246,0.22)"
-        strokeWidth="0.25"
-        strokeDasharray="1.2 2.6"
-        style={{ transformOrigin: '50px 50px' }}
+        stroke="#FFD0E2"
+        strokeWidth="0.5"
+        strokeLinecap="round"
+        strokeDasharray="0.1 2.4"
       />
 
-      <g stroke="rgba(56,189,248,0.2)" strokeWidth="0.3">
+      <g stroke="#FFC9DD" strokeWidth="0.7" strokeLinecap="round" strokeDasharray="0.1 2.2">
         {LATTICE_LINKS.map(([a, b]) => {
           const from = getNodeCenter(a);
           const to = getNodeCenter(b);
@@ -62,40 +50,41 @@ export function SignalTrace({ segments }: { segments: TraceSegment[] }) {
         })}
       </g>
 
-      <g fill="rgba(125,211,252,0.45)">
-        {LATTICE_LINKS.map(([a, b]) => {
-          const from = getNodeCenter(a);
-          const to = getNodeCenter(b);
-          return (
-            <circle
-              key={`mid-${a}-${b}`}
-              cx={(from.x + to.x) / 2}
-              cy={(from.y + to.y) / 2}
-              r="0.55"
-            />
-          );
-        })}
-      </g>
-
       <AnimatePresence>
         {segments.map((segment) => {
           const style = TONE_STYLE[segment.tone];
           const isError = segment.tone === 'error';
+          const d = segmentPath(segment.from, segment.to);
           return (
-            <motion.path
+            <motion.g
               key={segment.id}
-              d={segmentPath(segment.from, segment.to)}
-              fill="none"
-              stroke={style.stroke}
-              strokeWidth={0.8}
-              strokeLinecap="round"
-              strokeDasharray={isError ? '1.6 1.4' : undefined}
-              style={{ filter: style.glow }}
-              initial={isError ? { opacity: 0 } : { pathLength: 0, opacity: 0.2 }}
-              animate={isError ? { opacity: 1 } : { pathLength: 1, opacity: 1 }}
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
-              transition={{ duration: 0.3, ease: 'easeOut' }}
-            />
+              transition={{ duration: 0.2 }}
+            >
+              <motion.path
+                d={d}
+                fill="none"
+                stroke={style.halo}
+                strokeWidth={2.6}
+                strokeLinecap="round"
+                initial={isError ? undefined : { pathLength: 0 }}
+                animate={isError ? undefined : { pathLength: 1 }}
+                transition={{ duration: 0.3, ease: 'easeOut' }}
+              />
+              <motion.path
+                d={d}
+                fill="none"
+                stroke={style.stroke}
+                strokeWidth={1}
+                strokeLinecap="round"
+                strokeDasharray={isError ? '0.1 2.4' : undefined}
+                initial={isError ? undefined : { pathLength: 0 }}
+                animate={isError ? undefined : { pathLength: 1 }}
+                transition={{ duration: 0.3, ease: 'easeOut' }}
+              />
+            </motion.g>
           );
         })}
       </AnimatePresence>

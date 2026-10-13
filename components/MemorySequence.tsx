@@ -11,17 +11,17 @@ import { ExperimentHeader } from './ExperimentHeader';
 import { GameConsole } from './GameConsole';
 import { HeroSection } from './HeroSection';
 import { MemoryBoard } from './MemoryBoard';
-import { NeuralBackground } from './NeuralBackground';
 import { ResultsScreen } from './ResultsScreen';
+import { SweetBackground } from './SweetBackground';
 
 const HEADER_STATUS: Record<GamePhase, string> = {
-  idle: 'SYSTEM ONLINE',
-  countdown: 'SESSION STARTING',
-  showing: 'SESSION ACTIVE',
-  input: 'SESSION ACTIVE',
-  success: 'SESSION ACTIVE',
-  gameOver: 'SESSION ACTIVE',
-  results: 'SESSION CLOSED',
+  idle: 'Ready to play',
+  countdown: 'Starting soon',
+  showing: 'Playing',
+  input: 'Playing',
+  success: 'Playing',
+  gameOver: 'Playing',
+  results: 'All done',
 };
 
 export function MemorySequence() {
@@ -37,9 +37,9 @@ export function MemorySequence() {
     <MotionConfig reducedMotion="user">
       <div
         data-phase={phase}
-        className="relative flex min-h-dvh flex-col overflow-x-clip bg-void text-ice"
+        className="relative flex min-h-dvh flex-col overflow-x-clip bg-cream text-cocoa"
       >
-        <NeuralBackground calm={phase !== 'idle'} />
+        <SweetBackground calm={phase !== 'idle'} />
 
         <AnimatePresence>
           {!booted && <BootSequence key="boot" onDone={handleBootDone} />}

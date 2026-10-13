@@ -1,9 +1,10 @@
-import { Check, Crosshair, Eye, Radar, X } from 'lucide-react';
+import { CloudRain, Eye, Hand, Heart, Sparkles } from 'lucide-react';
 import { AnimatePresence, motion } from 'motion/react';
-import type { ReactNode } from 'react';
+import type { CSSProperties, ReactNode } from 'react';
 import { cn } from '@/lib/cn';
 import { formatScore, pad2 } from '@/lib/format';
 import type { GamePhase, ShowStage } from '@/lib/types';
+import { HeartDoodle } from './Doodles';
 import { SessionTimer } from './SessionTimer';
 
 interface GameStatusProps {
@@ -31,71 +32,74 @@ interface StatusCopy {
 function getCopy(props: GameStatusProps): StatusCopy {
   switch (props.phase) {
     case 'countdown':
-      return { headline: 'PREPARING EXPERIMENT', detail: 'Eyes on the grid.', tone: 'neutral' };
+      return { headline: 'Getting ready...', detail: 'Eyes on the friends!', tone: 'neutral' };
     case 'showing':
       if (props.showStage === 'intro') {
         return props.level === 1
-          ? { headline: 'WATCH THE PATTERN', detail: 'Memorize the order of the lights.', tone: 'observe' }
+          ? { headline: 'Watch closely!', detail: 'Remember the order they light up.', tone: 'observe' }
           : {
-              headline: `LEVEL ${pad2(props.level)}`,
-              detail: `${props.sequenceLength} nodes to memorize.`,
+              headline: `Level ${pad2(props.level)}`,
+              detail: `${props.sequenceLength} friends to remember.`,
               tone: 'observe',
             };
       }
-      return { headline: 'OBSERVE CAREFULLY', detail: 'Do not touch the grid yet.', tone: 'observe' };
+      return { headline: 'Watch carefully', detail: 'Just looking for now, no tapping yet~', tone: 'observe' };
     case 'input':
       return {
-        headline: 'YOUR TURN',
+        headline: 'Your turn!',
         detail:
           props.level === 1 && props.progress === 0
-            ? 'Repeat it in the same order.'
-            : `Node ${Math.min(props.progress + 1, props.sequenceLength)} of ${props.sequenceLength}.`,
+            ? 'Tap them in the same order.'
+            : `Friend ${Math.min(props.progress + 1, props.sequenceLength)} of ${props.sequenceLength}.`,
         tone: 'input',
       };
     case 'success':
       return {
-        headline: 'SEQUENCE CONFIRMED',
-        detail: props.mastered ? 'Final level cleared.' : `+${formatScore(props.lastScore ?? 0)} points`,
+        headline: 'Yay, you did it!',
+        detail: props.mastered ? 'Final level cleared!' : `+${formatScore(props.lastScore ?? 0)} points`,
         tone: 'success',
       };
     case 'gameOver':
       return {
-        headline: 'PATTERN LOST',
+        headline: 'Oh no, oopsie!',
         detail:
-          props.expectedNode !== null ? `Expected node ${props.expectedNode + 1}.` : 'Sequence interrupted.',
+          props.expectedNode !== null
+            ? `It was friend ${props.expectedNode + 1}.`
+            : 'The sequence got mixed up.',
         tone: 'error',
       };
     default:
-      return { headline: 'SYSTEM READY', detail: 'Awaiting experiment.', tone: 'neutral' };
+      return { headline: 'Ready!', detail: 'Waiting for you.', tone: 'neutral' };
   }
 }
 
-const TONE_BORDER: Record<Tone, string> = {
-  neutral: 'border-hairline',
-  observe: 'border-signal',
-  input: 'border-pulse',
-  success: 'border-signal',
-  error: 'border-fault',
+const TONE_CARD: Record<Tone, string> = {
+  neutral: 'border-lilac shadow-[0_5px_0_#E0D2FF]',
+  observe: 'border-sun shadow-[0_5px_0_#FFE27A]',
+  input: 'border-pink shadow-[0_5px_0_#FFC9DD]',
+  success: 'border-leaf shadow-[0_5px_0_#B0EACF]',
+  error: 'border-coral shadow-[0_5px_0_#FFC2C9]',
 };
 
 const TONE_ICON: Record<Tone, ReactNode> = {
-  neutral: <Radar className="size-5 text-mute" aria-hidden="true" />,
-  observe: <Eye className="size-5 text-signal" aria-hidden="true" />,
-  input: <Crosshair className="size-5 text-[#A78BFA]" aria-hidden="true" />,
-  success: <Check className="size-5 text-signal" aria-hidden="true" />,
-  error: <X className="size-5 text-fault" aria-hidden="true" />,
+  neutral: <Sparkles className="size-6 text-grape" aria-hidden="true" />,
+  observe: <Eye className="size-6 text-[#E8A21F]" aria-hidden="true" />,
+  input: <Hand className="size-6 text-rose" aria-hidden="true" />,
+  success: <Heart className="size-6 fill-leaf text-leaf" aria-hidden="true" />,
+  error: <CloudRain className="size-6 text-coral" aria-hidden="true" />,
 };
 
 function ProgressPips({ total, filled }: { total: number; filled: number }) {
   return (
     <div className="mt-4 flex flex-wrap gap-1.5" aria-hidden="true">
       {Array.from({ length: total }, (_, i) => (
-        <span
+        <HeartDoodle
           key={i}
           className={cn(
-            'h-1.5 w-5 rounded-full border transition-colors duration-200',
-            i < filled ? 'border-pulse bg-pulse' : 'border-hairline bg-transparent',
+            'size-5 transition-all duration-200',
+            i < filled ? 'scale-110 text-rose' : 'text-blush',
           )}
+          stroke={i < filled ? '#E8639A' : '#FFB7D2'}
         />
       ))}
     </div>
@@ -109,38 +113,44 @@ export function GameStatus(props: GameStatusProps) {
 
   return (
     <section
-      aria-label="Experiment status"
-      className={cn('border-l-2 pl-5 transition-colors duration-300', TONE_BORDER[copy.tone])}
+      aria-label="Game status"
+      className={cn(
+        'stitched rounded-[2rem] border-[3px] bg-paper/90 px-6 py-5 transition-colors duration-300',
+        TONE_CARD[copy.tone],
+      )}
+      style={{ '--stitch': '#FFE3EE' } as CSSProperties}
     >
-      <div className="flex items-center justify-between gap-4 font-mono text-[11px] tracking-[0.2em] text-mute">
-        <span>ACTIVE SESSION</span>
-        <span className="flex items-center gap-2 text-ice/90">
-          <span className="text-mute">TIME</span>
+      <div className="relative z-10 flex items-center justify-between gap-4 text-[12px] font-bold text-mute">
+        <span>Playing now</span>
+        <span className="flex items-center gap-2 rounded-full bg-blush px-3 py-1 text-cocoa">
+          <span className="text-mute">Time</span>
           <SessionTimer startTime={props.startTime} endTime={props.endTime} />
         </span>
       </div>
 
-      <div role="status" className="mt-4 min-h-[5.5rem]">
+      <div role="status" className="relative z-10 mt-4 min-h-[5.5rem]">
         <AnimatePresence mode="wait" initial={false}>
           <motion.div
             key={copy.headline}
-            initial={{ opacity: 0, y: 10, filter: 'blur(6px)' }}
-            animate={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
-            exit={{ opacity: 0, y: -8, filter: 'blur(6px)' }}
+            initial={{ opacity: 0, y: 10, scale: 0.96 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            exit={{ opacity: 0, y: -8, scale: 0.98 }}
             transition={{ duration: 0.25, ease: 'easeOut' }}
           >
             <div className="flex items-center gap-3">
               {TONE_ICON[copy.tone]}
-              <h2 className="text-2xl font-semibold tracking-tight text-ice sm:text-3xl lg:text-4xl">
+              <h2 className="font-display text-2xl font-semibold tracking-tight text-cocoa sm:text-3xl lg:text-4xl">
                 {copy.headline}
               </h2>
             </div>
-            <p className="mt-2 text-sm text-mute sm:text-base">{copy.detail}</p>
+            <p className="mt-2 text-base font-semibold text-mute sm:text-lg">{copy.detail}</p>
           </motion.div>
         </AnimatePresence>
       </div>
 
-      {showPips && <ProgressPips total={props.sequenceLength} filled={pipsFilled} />}
+      {showPips && <div className="relative z-10">
+        <ProgressPips total={props.sequenceLength} filled={pipsFilled} />
+      </div>}
     </section>
   );
 }
