@@ -130,7 +130,15 @@ export function MemoryNode({
                 : { scale: 1, x: 0, rotate: 0 }
         }
         transition={
-          status === 'error' ? { duration: 0.45 } : { type: 'spring', stiffness: 380, damping: 15 }
+          status === 'error'
+            ? { duration: 0.45 }
+            : {
+                type: 'spring',
+                stiffness: 380,
+                damping: 15,
+                // Keyframe arrays can't use springs, so the wiggle gets its own tween.
+                rotate: { type: 'tween', duration: 0.45, ease: 'easeInOut' },
+              }
         }
         whileHover={disabled ? undefined : { scale: 1.07, rotate: -3 }}
         whileTap={disabled ? undefined : { scale: 0.9 }}

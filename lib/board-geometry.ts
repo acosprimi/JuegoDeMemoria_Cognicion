@@ -11,10 +11,11 @@ export interface Point {
   y: number;
 }
 
+/** Numeric-keypad layout: 7 8 9 on top, 4 5 6 in the middle, 1 2 3 at the bottom. */
 export function getNodeCenter(index: number): Point {
   return {
     x: BOARD_COLUMNS[index % 3],
-    y: BOARD_COLUMNS[Math.floor(index / 3)],
+    y: BOARD_COLUMNS[2 - Math.floor(index / 3)],
   };
 }
 

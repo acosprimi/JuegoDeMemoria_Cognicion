@@ -51,41 +51,38 @@ export function SignalTrace({ segments }: { segments: TraceSegment[] }) {
       </g>
 
       <AnimatePresence>
-        {segments.map((segment) => {
+        {segments.flatMap((segment) => {
           const style = TONE_STYLE[segment.tone];
           const isError = segment.tone === 'error';
           const d = segmentPath(segment.from, segment.to);
-          return (
-            <motion.g
-              key={segment.id}
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
+          const draw = isError
+            ? { initial: { opacity: 0 }, animate: { opacity: 1 } }
+            : { initial: { pathLength: 0, opacity: 0.2 }, animate: { pathLength: 1, opacity: 1 } };
+          return [
+            <motion.path
+              key={`${segment.id}-halo`}
+              d={d}
+              fill="none"
+              stroke={style.halo}
+              strokeWidth={3.4}
+              strokeLinecap="round"
+              {...draw}
               exit={{ opacity: 0 }}
-              transition={{ duration: 0.2 }}
-            >
-              <motion.path
-                d={d}
-                fill="none"
-                stroke={style.halo}
-                strokeWidth={2.6}
-                strokeLinecap="round"
-                initial={isError ? undefined : { pathLength: 0 }}
-                animate={isError ? undefined : { pathLength: 1 }}
-                transition={{ duration: 0.3, ease: 'easeOut' }}
-              />
-              <motion.path
-                d={d}
-                fill="none"
-                stroke={style.stroke}
-                strokeWidth={1}
-                strokeLinecap="round"
-                strokeDasharray={isError ? '0.1 2.4' : undefined}
-                initial={isError ? undefined : { pathLength: 0 }}
-                animate={isError ? undefined : { pathLength: 1 }}
-                transition={{ duration: 0.3, ease: 'easeOut' }}
-              />
-            </motion.g>
-          );
+              transition={{ duration: 0.3, ease: 'easeOut' }}
+            />,
+            <motion.path
+              key={segment.id}
+              d={d}
+              fill="none"
+              stroke={style.stroke}
+              strokeWidth={1.3}
+              strokeLinecap="round"
+              strokeDasharray={isError ? '0.1 2.4' : undefined}
+              {...draw}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.3, ease: 'easeOut' }}
+            />,
+          ];
         })}
       </AnimatePresence>
     </svg>
